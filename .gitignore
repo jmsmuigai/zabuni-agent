@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+.pytest_cache/
+data/*.sqlite
+data/kenya_*.jsonl.gz
+runs/*
+!runs/.gitkeep
+workspace/drafts/*
+!workspace/drafts/.gitkeep
+workspace/committee_outbox/*
+!workspace/committee_outbox/.gitkeep
+workspace/inputs/replay_*
+uv.lock

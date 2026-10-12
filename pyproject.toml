@@ -1,0 +1,37 @@
+[project]
+name = "zabuni-agent"
+version = "0.1.0"
+description = "Agentic value-for-money review of public tenders over OCDS data, with MCP tools and a human approval gate."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "James Mukoma Mburu" }]
+requires-python = ">=3.11"
+dependencies = [
+  "mcp>=1.9",
+  "langgraph>=0.4",
+  "langchain-core>=0.3",
+  "langchain-mcp-adapters>=0.1.7",
+  "langchain-ollama>=0.3",
+  "pydantic>=2.7",
+  "rapidfuzz>=3.9",
+]
+
+[project.optional-dependencies]
+frontier = ["langchain-anthropic>=0.3"]
+dev = ["pytest>=8", "pytest-asyncio>=0.23"]
+
+[project.scripts]
+zabuni = "zabuni.cli:main"
+zabuni-mcp = "zabuni.mcp_server.server:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/zabuni"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+pythonpath = ["src"]
