@@ -29,6 +29,10 @@ Instructions hidden in a request are reported, not followed; requests in Kiswahi
 Honest limits: prices are compared on award totals because no quantities are published (our
 documented unfixed failure), and bids are not evaluated because bid documents are not public.
 
+## Agentic design and MCP (form answers)
+
+See [docs/AGENTIC_AND_MCP.md](docs/AGENTIC_AND_MCP.md); architecture diagram for upload: [docs/architecture.png](docs/architecture.png).
+
 ## Checklist
 
 - [ ] Repository public, MIT licence visible, README runs with `make demo`
@@ -37,6 +41,7 @@ documented unfixed failure), and bids are not evaluated because bid documents ar
 - [ ] At least one field conversation recorded in WORKFLOW.md
 - [ ] Demo video under 3 minutes on YouTube or Vimeo, public, unedited agent run with tool calls
       on screen, including the E15 failure
+- [x] Architecture diagram committed (docs/architecture.png)
 - [ ] Description pasted (above), theme: Financial services — Value for money
 - [ ] Last commit before the deadline timestamp; nothing pushed after it
 

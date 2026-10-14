@@ -22,6 +22,12 @@ The agent never awards a tender and never recommends who should win.
                                                             every source)    token-signed)     read-only)
 ```
 
+## Architecture
+
+![Zabuni architecture: users, LangGraph agent, MCP client, two MCP servers, human gate, data](docs/architecture.png)
+
+Full write-up: [ARCHITECTURE.md](ARCHITECTURE.md) · what makes it agentic and how MCP is used: [docs/AGENTIC_AND_MCP.md](docs/AGENTIC_AND_MCP.md)
+
 ## Run it — one command
 
 ```bash
