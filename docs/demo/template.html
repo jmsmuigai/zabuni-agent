@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zabuni — live demo</title>
+<meta name="description" content="Replay of real recorded Zabuni agent runs: MCP tool calls, sourced findings, self-check, human approval gate, filed value-for-money file.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<style>
+:root{
+  --bg:#f6f7f9;--panel:#ffffff;--ink:#1b2230;--muted:#5d6676;--line:#e2e5ea;
+  --accent:#1f7a52;--accent-soft:#e6f4ed;--blue:#2f5bd3;--blue-soft:#ecf1ff;
+  --red:#c03a4b;--red-soft:#fdecee;--amber:#b86e00;--amber-soft:#fff3df;
+  --code-bg:#11161f;--code-ink:#d7dde8;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1319;--panel:#171c24;--ink:#e6e9ef;--muted:#9aa3b2;--line:#2a313c;
+  --accent:#4cc38a;--accent-soft:#16291f;--blue:#7f9cff;--blue-soft:#1a2236;
+  --red:#ff7a8a;--red-soft:#2d1a1e;--amber:#f0b04a;--amber-soft:#2b2214;
+  --code-bg:#0a0d12;--code-ink:#d7dde8;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 Inter,system-ui,sans-serif}
+a{color:var(--blue)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+header{background:var(--panel);border-bottom:1px solid var(--line)}
+header .wrap{padding-top:28px;padding-bottom:22px}
+.kicker{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-size:30px;line-height:1.2;margin:6px 0 8px;font-weight:800;letter-spacing:-.01em}
+.lede{color:var(--muted);max-width:760px;margin:0}
+.links{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);text-decoration:none;font-weight:600;font-size:14px;cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.note{margin-top:16px;padding:10px 14px;border-radius:8px;background:var(--amber-soft);color:var(--ink);font-size:13.5px;border:1px solid color-mix(in srgb,var(--amber) 35%,transparent)}
+.tabs{display:flex;gap:8px;margin:22px 0 14px;flex-wrap:wrap}
+.tab{flex:1 1 220px;text-align:left;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:var(--panel);cursor:pointer;color:var(--ink);font:inherit}
+.tab b{display:block;font-size:14.5px}
+.tab span{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.tab[aria-selected="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:16px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}
+.card h2{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 10px;font-weight:700}
+pre,code{font-family:"JetBrains Mono",ui-monospace,monospace}
+pre.memo{white-space:pre-wrap;word-break:break-word;font-size:12.5px;margin:0;color:var(--ink);background:transparent}
+.toolbar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.stat{font-size:12.5px;color:var(--muted)}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.step{border:1px solid var(--line);border-radius:9px;padding:10px 12px;transition:opacity .25s, transform .25s}
+.step.hidden{display:none}
+.step .row{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.pill{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:999px}
+.pill.mcp-own{background:var(--accent-soft);color:var(--accent)}
+.pill.mcp-fs{background:var(--blue-soft);color:var(--blue)}
+.pill.plan{background:var(--blue-soft);color:var(--blue)}
+.pill.verify{background:var(--accent-soft);color:var(--accent)}
+.pill.gate{background:var(--red-soft);color:var(--red)}
+.tname{font-family:"JetBrains Mono",monospace;font-weight:500;font-size:13.5px}
+.ms{margin-left:auto;color:var(--muted);font-size:12px}
+details{margin-top:6px}
+summary{cursor:pointer;color:var(--muted);font-size:12.5px}
+pre.json{background:var(--code-bg);color:var(--code-ink);padding:10px;border-radius:7px;font-size:11.8px;overflow:auto;max-height:260px;margin:6px 0 0;white-space:pre-wrap;word-break:break-word}
+.gatebox{border:1.5px solid var(--red);background:var(--red-soft);border-radius:10px;padding:12px 14px}
+.gatebox h3{margin:0 0 6px;font-size:15px;color:var(--red)}
+.finding{margin:6px 0;font-size:13.5px}
+.sev{font-weight:700;text-transform:uppercase;font-size:11px;margin-right:6px}
+.sev.high{color:var(--red)}.sev.medium{color:var(--amber)}.sev.info{color:var(--muted)}
+.decision{margin-top:10px;padding:8px 10px;border-radius:7px;background:var(--panel);border:1px solid var(--line);font-size:13.5px}
+.report{font-size:14px}
+.report h1{font-size:20px;margin:0 0 6px}.report h2{font-size:16px;margin:18px 0 6px;text-transform:none;letter-spacing:0;color:var(--ink)}
+.report h3{font-size:14.5px;margin:14px 0 4px}
+.report code{font-size:12px;background:var(--bg);padding:1px 4px;border-radius:4px;word-break:break-all}
+.report li{margin:3px 0}
+section.full{margin-top:16px}
+footer{color:var(--muted);font-size:13px;padding:28px 0 40px}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="kicker">African Agentic AI Design Challenge · Governance track</div>
+  <h1>Zabuni — the value-for-money file, prepared in minutes, decided by people</h1>
+  <p class="lede">An MCP-based agent for a Kenyan county's Supply Chain Management unit. It benchmarks a proposed tender price against published OCDS awards, profiles the supplier, checks the budget, detects contract splitting, cites a source for every finding, then <b>stops for a named human</b>. It never awards a tender.</p>
+  <div class="links">
+    <a class="btn primary" href="https://codespaces.new/jmsmuigai/zabuni-agent?quickstart=1" target="_blank" rel="noopener">▶ Run it live in your browser (Codespaces)</a>
+    <a class="btn" href="https://github.com/jmsmuigai/zabuni-agent" target="_blank" rel="noopener">GitHub repository</a>
+    <a class="btn" href="https://github.com/jmsmuigai/zabuni-agent/blob/main/docs/architecture.png" target="_blank" rel="noopener">Architecture diagram</a>
+    <a class="btn" href="https://github.com/jmsmuigai/zabuni-agent/actions" target="_blank" rel="noopener">CI: 32 tests</a>
+  </div>
+  <div class="note"><b>What you are looking at:</b> three real runs, recorded unedited from the agent's own audit log, summary and filed report. They use the repo's labelled <i>scripted baseline</i> policy in place of the language model so they reproduce exactly; the two MCP servers, guardrails, self-check, human gate and filing are the real code. Data is a synthetic OCDS fixture with fictional buyers and suppliers. For the open-weights model (Qwen 2.5 via Ollama), run <code>make demo</code>.</div>
+</div></header>
+
+<main class="wrap">
+  <div class="tabs" id="tabs" role="tablist"></div>
+  <div class="grid">
+    <div class="card"><h2>1 · Request memo (input)</h2><pre class="memo" id="memo"></pre></div>
+    <div class="card">
+      <h2>2 · Agent run — every MCP call, in order</h2>
+      <div class="toolbar">
+        <button class="btn primary" id="replay">▶ Replay run</button>
+        <button class="btn" id="showall">Show all steps</button>
+        <span class="stat" id="stat"></span>
+      </div>
+      <ol class="steps" id="steps"></ol>
+    </div>
+  </div>
+  <section class="card full"><h2>3 · Filed value-for-money file (output, after human approval)</h2><div class="report" id="report"></div></section>
+</main>
+<footer class="wrap">MIT licence · built by James Mukoma Mburu · page generated by <code>scripts/build_demo_page.py</code> from <code>runs/&lt;run&gt;/audit.jsonl</code>. Raw data: <a href="demo/runs.json">demo/runs.json</a>.</footer>
+
+<script>
+const RUNS = /*__RUNS__*/[];
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let current = 0, timer = null;
+
+function stepHtml(s){
+  if (s.type === "tool"){
+    const own = s.server === "zabuni";
+    return `<div class="row"><span class="pill ${own ? "mcp-own" : "mcp-fs"}">${own ? "MCP · zabuni" : "MCP · filesystem"}</span>
+      <span class="tname">${esc(s.tool)}</span><span class="ms">${s.ok ? "ok" : "error"} · ${s.ms} ms</span></div>
+      <details><summary>arguments and result</summary><pre class="json">${esc(JSON.stringify(s.args, null, 1))}</pre><pre class="json">${esc(s.excerpt)}</pre></details>`;
+  }
+  if (s.type === "plan"){
+    const p = s.plan;
+    return `<div class="row"><span class="pill plan">plan</span><span>Item <b>${esc(p.item_query)}</b> · KES ${Number(p.proposed_amount).toLocaleString()} · checks: ${esc((p.checks||[]).join(", "))}</span></div>
+      <details><summary>full plan</summary><pre class="json">${esc(JSON.stringify(p, null, 1))}</pre></details>`;
+  }
+  if (s.type === "verify"){
+    return `<div class="row"><span class="pill verify">self-check</span><span>Round ${s.round}: ${s.problems.length ? esc(s.problems.join("; ")) : "passed — every citation re-resolved, every planned check ran"} (${s.findings} finding${s.findings===1?"":"s"})</span></div>`;
+  }
+  if (s.type === "gate"){
+    return `<div class="gatebox"><h3>■ Human gate — the agent has stopped</h3>
+      <div style="font-size:12.5px;color:var(--muted)">Draft sha256 <code>${esc(s.sha256.slice(0,16))}…</code></div>
+      ${s.findings.map(f => `<div class="finding"><span class="sev ${esc(f.severity)}">${esc(f.severity)}</span><b>${esc(f.id)} · ${esc(f.type.replace(/_/g," "))}</b> — ${esc(f.statement)}</div>`).join("")}
+      <div style="font-size:12.5px;margin-top:6px">The agent never awards. A named person decides whether this file goes to the committee.</div></div>`;
+  }
+  if (s.type === "decision"){
+    return `<div class="decision">✔ <b>${esc(s.approver)}</b> chose <b>${esc(s.decision)}</b>. The graph mints an HMAC token over (run, approver, draft sha256) and calls <code>file_to_committee</code> itself — the model never sees this tool.</div>`;
+  }
+  return "";
+}
+
+function render(i){
+  current = i; clearInterval(timer);
+  const r = RUNS[i];
+  document.querySelectorAll(".tab").forEach((t, k) => t.setAttribute("aria-selected", k === i));
+  $("memo").textContent = r.request.trim();
+  $("steps").innerHTML = r.steps.map(s => `<li class="step">${stepHtml(s)}</li>`).join("");
+  const m = r.summary;
+  $("stat").textContent = `${m.tool_calls} MCP calls · ${m.tool_errors} errors · ${m.seconds}s · API cost $${m.api_cost_usd} · policy: ${m.model}`;
+  try { $("report").innerHTML = window.marked ? marked.parse(r.report) : `<pre class="memo">${esc(r.report)}</pre>`; }
+  catch { $("report").innerHTML = `<pre class="memo">${esc(r.report)}</pre>`; }
+}
+
+function replay(){
+  clearInterval(timer);
+  const items = [...document.querySelectorAll("#steps .step")];
+  items.forEach(el => el.classList.add("hidden"));
+  let k = 0;
+  timer = setInterval(() => { if (k < items.length) items[k++].classList.remove("hidden"); else clearInterval(timer); }, 650);
+}
+
+$("tabs").innerHTML = RUNS.map((r, i) => `<button class="tab" role="tab" data-i="${i}"><b>${esc(r.title)}</b><span>${esc(r.blurb)}</span></button>`).join("");
+$("tabs").addEventListener("click", (e) => { const b = e.target.closest(".tab"); if (b) { render(+b.dataset.i); replay(); } });
+$("replay").addEventListener("click", replay);
+$("showall").addEventListener("click", () => { clearInterval(timer); document.querySelectorAll("#steps .step").forEach(el => el.classList.remove("hidden")); });
+if (RUNS.length) render(0);
+</script>
+</body>
+</html>
