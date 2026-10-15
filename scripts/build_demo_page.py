@@ -64,8 +64,13 @@ def load_run(run_id: str) -> dict:
     if filed.get("path"):
         report_md = (ROOT / "workspace" / filed["path"]).read_text()
     title, blurb = TITLES.get(run_id, (run_id, ""))
+    try:  # pre-render so the page needs no CDN; pip install markdown
+        import markdown
+        report_html = markdown.markdown(report_md, extensions=["extra"])
+    except ImportError:
+        report_html = ""
     return clean({"run_id": run_id, "title": title, "blurb": blurb, "request": request_md,
-                  "steps": steps, "summary": summary, "report": report_md})
+                  "steps": steps, "summary": summary, "report": report_md, "report_html": report_html})
 
 
 def main(run_ids: list[str]) -> None:

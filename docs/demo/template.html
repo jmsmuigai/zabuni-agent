@@ -7,7 +7,6 @@
 <meta name="description" content="Replay of real recorded Zabuni agent runs: MCP tool calls, sourced findings, self-check, human approval gate, filed value-for-money file.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <style>
 :root{
   --bg:#f6f7f9;--panel:#ffffff;--ink:#1b2230;--muted:#5d6676;--line:#e2e5ea;
@@ -83,6 +82,7 @@ footer{color:var(--muted);font-size:13px;padding:28px 0 40px}
   <p class="lede">An MCP-based agent for a Kenyan county's Supply Chain Management unit. It benchmarks a proposed tender price against published OCDS awards, profiles the supplier, checks the budget, detects contract splitting, cites a source for every finding, then <b>stops for a named human</b>. It never awards a tender.</p>
   <div class="links">
     <a class="btn primary" href="https://codespaces.new/jmsmuigai/zabuni-agent?quickstart=1" target="_blank" rel="noopener">▶ Run it live in your browser (Codespaces)</a>
+    <a class="btn" href="zabuni-demo.mp4" target="_blank" rel="noopener">🎬 Demo video (2 min)</a>
     <a class="btn" href="https://github.com/jmsmuigai/zabuni-agent" target="_blank" rel="noopener">GitHub repository</a>
     <a class="btn" href="https://github.com/jmsmuigai/zabuni-agent/blob/main/docs/architecture.png" target="_blank" rel="noopener">Architecture diagram</a>
     <a class="btn" href="https://github.com/jmsmuigai/zabuni-agent/actions" target="_blank" rel="noopener">CI: 32 tests</a>
@@ -149,8 +149,7 @@ function render(i){
   $("steps").innerHTML = r.steps.map(s => `<li class="step">${stepHtml(s)}</li>`).join("");
   const m = r.summary;
   $("stat").textContent = `${m.tool_calls} MCP calls · ${m.tool_errors} errors · ${m.seconds}s · API cost $${m.api_cost_usd} · policy: ${m.model}`;
-  try { $("report").innerHTML = window.marked ? marked.parse(r.report) : `<pre class="memo">${esc(r.report)}</pre>`; }
-  catch { $("report").innerHTML = `<pre class="memo">${esc(r.report)}</pre>`; }
+  $("report").innerHTML = r.report_html || `<pre class="memo">${esc(r.report)}</pre>`;
 }
 
 function replay(){

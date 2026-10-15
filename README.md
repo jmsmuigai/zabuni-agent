@@ -1,6 +1,6 @@
 # Zabuni — the value-for-money file, prepared in minutes, decided by people
 
-**[▶ Live demo](https://jmsmuigai.github.io/zabuni-agent/)** · **[Run it in your browser (Codespaces)](https://codespaces.new/jmsmuigai/zabuni-agent?quickstart=1)** · [Architecture](#architecture) · [What makes it agentic + MCP](docs/AGENTIC_AND_MCP.md)
+**[▶ Live demo](https://jmsmuigai.github.io/zabuni-agent/)** · **[🎬 Demo video (2 min)](https://jmsmuigai.github.io/zabuni-agent/zabuni-demo.mp4)** · **[Run it in your browser (Codespaces)](https://codespaces.new/jmsmuigai/zabuni-agent?quickstart=1)** · [Architecture](#architecture) · [What makes it agentic + MCP](docs/AGENTIC_AND_MCP.md)
 
 [![ci](https://github.com/jmsmuigai/zabuni-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/jmsmuigai/zabuni-agent/actions/workflows/ci.yml) [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/jmsmuigai/zabuni-agent?quickstart=1)
 
